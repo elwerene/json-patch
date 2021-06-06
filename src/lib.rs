@@ -184,8 +184,8 @@ pub enum PatchError {
     TestFailed,
 }
 
-impl Error for PatchError {
-    fn description(&self) -> &str {
+impl PatchError {
+    fn desc(&self) -> &str {
         match *self {
             PatchError::InvalidPointer => "invalid pointer",
             PatchError::TestFailed => "test failed",
@@ -193,9 +193,15 @@ impl Error for PatchError {
     }
 }
 
+impl Error for PatchError {
+    fn description(&self) -> &str {
+        self.desc()
+    }
+}
+
 impl fmt::Display for PatchError {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        self.description().fmt(fmt)
+        self.desc().fmt(fmt)
     }
 }
 
@@ -223,7 +229,7 @@ fn split_pointer(pointer: &str) -> Result<(&str, String), PatchError> {
 }
 
 fn add(doc: &mut Value, path: &str, value: Value) -> Result<Option<Value>, PatchError> {
-    if path == "" {
+    if path.is_empty() {
         return Ok(Some(mem::replace(doc, value)));
     }
 

@@ -230,4 +230,18 @@ mod tests {
         crate::patch(&mut left, &patch).unwrap();
         assert_eq!(left, right);
     }
+
+    #[test]
+    pub fn add_head() {
+        let left = json!(["hello", "bye"]);
+        let right = json!(["bye"]);
+        let p = super::diff(&left, &right);
+        assert_eq!(
+            p,
+            serde_json::from_value(json!([
+                { "op": "add", "path": "/", "value": "hello" },
+            ]))
+            .unwrap()
+        );
+    }
 }
